@@ -13,6 +13,9 @@ internal class ObjectCreator : MonoBehaviour
     [Header("Resources")]
     [SerializeField] private ClickableObject _objectPrefab;
     [SerializeField] private List<Material> _materials = new List<Material>();
+    [SerializeField] private Exploder _exploder;
+
+    private List<Rigidbody> _fragmentsRigidbodies = new List<Rigidbody>();
 
     public void CreateFragments(ClickableObject original)
     {
@@ -22,32 +25,63 @@ internal class ObjectCreator : MonoBehaviour
             return;
         }
 
+        ClearFragments();
+        CreateNewFragments(original);
+        ApplyExplosion(original.transform.position, original.Size);
+    }
+
+    private void CreateNewFragments(ClickableObject original)
+    {
         int count = Random.Range(_minCount, _maxCount + 1);
         Vector3 newSize = original.Size / _sizeReduction;
         int newSplitChance = original.SplitChance / _splitChanceDivider;
 
         for (int i = 0; i < count; i++)
         {
-            Vector3 spawnPosition = original.transform.position + Random.insideUnitSphere * _spawnRadius; 
+            Vector3 spawnPosition = original.transform.position + Random.insideUnitSphere * _spawnRadius;
 
-            CreateFragment(spawnPosition, newSize, original.Material, newSplitChance);
+            var fragment = CreateFragment(spawnPosition, newSize, original.Material, newSplitChance);
+
+            if (fragment.TryGetComponent<Rigidbody>(out var rigidbody))
+            {
+                _fragmentsRigidbodies.Add(rigidbody);
+            }
         }
     }
 
-    private void CreateFragment(Vector3 position, Vector3 size, Material originalMaterial, int splitChance)
+    private void ApplyExplosion(Vector3 position, Vector3 size)
     {
-        ClickableObject newObj = Instantiate(
+        if (_exploder != null)
+        {
+            _exploder.Enable(position, size, _fragmentsRigidbodies);
+        }
+        else
+        {
+            Debug.LogWarning("Exploder not assigned!", this);
+        }
+    }
+
+    private void ClearFragments()
+    {
+        _fragmentsRigidbodies.Clear();
+    }
+
+    private ClickableObject CreateFragment(Vector3 position, Vector3 size, Material originalMaterial, int splitChance)
+    {
+        ClickableObject newObject = Instantiate(
             _objectPrefab,
             position,
             Quaternion.identity
         );
 
-        newObj.Initialize(
+        newObject.Initialize(
             position: position,
             size: size,
             material: GetUniqueMaterial(originalMaterial),
             splitChance: splitChance
         );
+
+        return newObject;
     }
 
     private Material GetUniqueMaterial(Material original)

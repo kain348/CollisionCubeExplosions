@@ -871,6 +871,7 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 2474029cc7a0a534dbd05a75258a2b7e, type: 2}
   - {fileID: 2100000, guid: 08628669b983a964189fd26a701c78ef, type: 2}
   - {fileID: 2100000, guid: adc4cf8f4ed163c49964ca30a00b50c3, type: 2}
+  _exploder: {fileID: 1129771884}
 --- !u!114 &1129771886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -897,7 +898,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _separator: {fileID: 1129771886}
   _objectCreator: {fileID: 1129771885}
-  _exploder: {fileID: 1129771884}
+  _clickHandler: {fileID: 1129771883}
 --- !u!1001 &1160830858
 PrefabInstance:
   m_ObjectHideFlags: 0

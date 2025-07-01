@@ -1,15 +1,23 @@
 ﻿using UnityEngine;
 
-internal class ObjectsManager : MonoBehaviour
+internal class ObjectDestructionController : MonoBehaviour
 {
     [Header("Settings")]
     [SerializeField] private Separator _separator;
     [SerializeField] private ObjectCreator _objectCreator;
-    [SerializeField] private Exploder _exploder;
+    [SerializeField] private RaycastClickHandler _clickHandler;
 
-    private void OnEnable() => ClickableObject.OnObjectClicked += HandleObjectClick;
+    private void OnEnable()
+    {
+        if (_clickHandler != null)
+            _clickHandler.OnClickableObjectClicked += HandleObjectClick;
+    }
 
-    private void OnDisable() => ClickableObject.OnObjectClicked -= HandleObjectClick;
+    private void OnDisable()
+    {
+        if (_clickHandler != null)
+            _clickHandler.OnClickableObjectClicked -= HandleObjectClick;
+    }
 
     private void HandleObjectClick(ClickableObject clickedObject)
     {
@@ -21,6 +29,5 @@ internal class ObjectsManager : MonoBehaviour
         }
 
         Destroy(clickedObject.gameObject);
-        _exploder.Enable(clickedObject.Position, clickedObject.Size);
     }
 }
