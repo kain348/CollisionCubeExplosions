@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 internal class Exploder : MonoBehaviour
 {
@@ -8,27 +9,25 @@ internal class Exploder : MonoBehaviour
     [SerializeField, Min(0f)] private float _upwardsModifier = 0f;
 
     [Header("Size Scaling")]
-    [SerializeField] private bool _scaleForceWithSize = false; // <---- Новая настройка
-    [SerializeField, Min(0.1f)] private float _minSizeMultiplier = 0.5f; // <---- Добавлено
-    [SerializeField, Min(1f)] private float _maxSizeMultiplier = 2f; // <---- Добавлено
-    [SerializeField] private float _noScalingMultiplier = 1f; // <---- Явное значение вместо 1f
+    [SerializeField] private bool _scaleForceWithSize = false; 
+    [SerializeField, Min(0.1f)] private float _minSizeMultiplier = 0.5f; 
+    [SerializeField, Min(1f)] private float _maxSizeMultiplier = 2f;
+    [SerializeField] private float _noScalingMultiplier = 1f;
 
-    public void Enable(Vector3 explosionPosition, Vector3 objectSize)
+    public void Enable(Vector3 explosionPosition, Vector3 objectSize, List<Rigidbody> fragments)
     {
-        float sizeMultiplier = _scaleForceWithSize
-            ? Mathf.Clamp(objectSize.magnitude, _minSizeMultiplier, _maxSizeMultiplier)
-            : _noScalingMultiplier; // <---- Учет размера
+        if (fragments == null || fragments.Count == 0)
+            return;
 
+        float sizeMultiplier = GetSizeMultiplier(objectSize);
         float actualForce = _baseExplosionForce * sizeMultiplier;
         float actualRadius = _baseExplosionRadius * sizeMultiplier;
 
-        Collider[] colliders = Physics.OverlapSphere(explosionPosition, actualRadius);
-
-        foreach (var collider in colliders)
+        foreach (var rigidbody in fragments)
         {
-            if (collider.attachedRigidbody != null)
+            if (rigidbody != null)
             {
-                collider.attachedRigidbody.AddExplosionForce(
+                rigidbody.AddExplosionForce(
                     actualForce,
                     explosionPosition,
                     actualRadius,
@@ -37,6 +36,15 @@ internal class Exploder : MonoBehaviour
                     );
             }
         }
+    }
+
+    private float GetSizeMultiplier(Vector3 objectSize)
+    {
+        if (_scaleForceWithSize == false)
+            return _noScalingMultiplier;
+
+        float sizeMagnitude = objectSize.magnitude;
+        return Mathf.Clamp(sizeMagnitude, _minSizeMultiplier, _maxSizeMultiplier);
     }
 
     private void OnDrawGizmosSelected()

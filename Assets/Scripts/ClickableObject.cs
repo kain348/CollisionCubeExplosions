@@ -13,20 +13,16 @@ public class ClickableObject : MonoBehaviour
     [SerializeField] private Material _prefabDefaultMaterial;
     [SerializeField, Range(0, 100)] private int _prefabSplitChance = 100;
 
-    private Vector3 _currentPosition;
-    private Vector3 _currentSize;
-    private Material _currentMaterial;
-    private int _currentSplitChance;
-
     private Renderer _cachedRenderer;
     private Rigidbody _cachedRigidbody;
     private Collider _cachedCollider;
 
-    public Vector3 Position => _currentPosition;
-    public Vector3 Size => _currentSize;
-    public Material Material => _currentMaterial;
-    public int SplitChance => _currentSplitChance;
     public Collider ObjectCollider => _cachedCollider;
+
+    public Vector3 Position { get; private set; }
+    public Vector3 Size { get; private set; }
+    public Material Material { get; private set; }
+    public int SplitChance { get; private set; }
 
     public static event System.Action<ClickableObject> OnObjectClicked;
 
@@ -36,30 +32,30 @@ public class ClickableObject : MonoBehaviour
         _cachedRigidbody = GetComponent<Rigidbody>();
         _cachedCollider = GetComponent<Collider>();
 
-        _currentPosition = transform.position;
-        _currentSize = transform.localScale;
-        _currentMaterial = _cachedRenderer.material;
-        _currentSplitChance = _prefabSplitChance;
+        Position = transform.position;
+        Size = transform.localScale;
+        Material = _cachedRenderer.material;
+        SplitChance = _prefabSplitChance;
     }
 
     public void Initialize(Vector3 position, Vector3 size, Material material, int splitChance)
     {
-        _currentPosition = position;
-        _currentSize = size;
-        _currentMaterial = material;
-        _currentSplitChance = splitChance;
+        Position = position;
+        Size = size;
+        Material = material;
+        SplitChance = splitChance;
 
         ApplyRuntimeSettings();
     }
 
     private void ApplyRuntimeSettings()
     {
-        transform.position = _currentPosition;
-        transform.localScale = _currentSize;
+        transform.position = Position;
+        transform.localScale = Size;
 
-        if (_currentMaterial != null)
+        if (Material != null)
         {
-            _cachedRenderer.material = _currentMaterial;
+            _cachedRenderer.material = Material;
         }
     }
         
@@ -75,10 +71,5 @@ public class ClickableObject : MonoBehaviour
                 GetComponent<Renderer>().material = _prefabDefaultMaterial;
             }
         }
-    }
-
-    public void HandleClick()
-    {
-        OnObjectClicked?.Invoke(this);
     }
 }
