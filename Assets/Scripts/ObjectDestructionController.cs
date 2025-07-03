@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 internal class ObjectDestructionController : MonoBehaviour
 {
@@ -6,6 +7,7 @@ internal class ObjectDestructionController : MonoBehaviour
     [SerializeField] private Separator _separator;
     [SerializeField] private ObjectCreator _objectCreator;
     [SerializeField] private RaycastClickHandler _clickHandler;
+    [SerializeField] private Exploder _exploder;
 
     private void OnEnable()
     {
@@ -25,7 +27,12 @@ internal class ObjectDestructionController : MonoBehaviour
 
         if (_separator.ShouldSplit(clickedObject.SplitChance))
         {
-            _objectCreator.CreateFragments(clickedObject);
+            List<Rigidbody> newObjectRigidbodies = _objectCreator.CreateFragments(clickedObject);
+
+            if (newObjectRigidbodies.Count > 0)
+            {
+                _exploder.Explode(clickedObject.Position, clickedObject.Size, newObjectRigidbodies);
+            }
         }
 
         Destroy(clickedObject.gameObject);

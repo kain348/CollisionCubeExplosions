@@ -14,7 +14,7 @@ internal class Exploder : MonoBehaviour
     [SerializeField, Min(1f)] private float _maxSizeMultiplier = 2f;
     [SerializeField] private float _noScalingMultiplier = 1f;
 
-    public void Enable(Vector3 explosionPosition, Vector3 objectSize, List<Rigidbody> fragments)
+    public void Explode(Vector3 explosionPosition, Vector3 objectSize, List<Rigidbody> fragments)
     {
         if (fragments == null || fragments.Count == 0)
             return;
