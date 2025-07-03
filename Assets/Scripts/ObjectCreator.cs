@@ -13,25 +13,23 @@ internal class ObjectCreator : MonoBehaviour
     [Header("Resources")]
     [SerializeField] private ClickableObject _objectPrefab;
     [SerializeField] private List<Material> _materials = new List<Material>();
-    [SerializeField] private Exploder _exploder;
 
-    private List<Rigidbody> _fragmentsRigidbodies = new List<Rigidbody>();
-
-    public void CreateFragments(ClickableObject original)
+    public List<Rigidbody> CreateFragments(ClickableObject original)
     {
         if (!_objectPrefab)
         {
             Debug.LogError("Prefab not assigned!", this);
-            return;
-        }
 
-        ClearFragments();
-        CreateNewFragments(original);
-        ApplyExplosion(original.transform.position, original.Size);
+            return new List<Rigidbody>();
+        }
+               
+        return CreateNewFragments(original);        
     }
 
-    private void CreateNewFragments(ClickableObject original)
+    private List<Rigidbody> CreateNewFragments(ClickableObject original)
     {
+        List<Rigidbody> fragmentsRigidbodies = new List<Rigidbody>();
+
         int count = Random.Range(_minCount, _maxCount + 1);
         Vector3 newSize = original.Size / _sizeReduction;
         int newSplitChance = original.SplitChance / _splitChanceDivider;
@@ -44,26 +42,11 @@ internal class ObjectCreator : MonoBehaviour
 
             if (fragment.TryGetComponent<Rigidbody>(out var rigidbody))
             {
-                _fragmentsRigidbodies.Add(rigidbody);
+                fragmentsRigidbodies.Add(rigidbody);
             }
         }
-    }
 
-    private void ApplyExplosion(Vector3 position, Vector3 size)
-    {
-        if (_exploder != null)
-        {
-            _exploder.Enable(position, size, _fragmentsRigidbodies);
-        }
-        else
-        {
-            Debug.LogWarning("Exploder not assigned!", this);
-        }
-    }
-
-    private void ClearFragments()
-    {
-        _fragmentsRigidbodies.Clear();
+        return fragmentsRigidbodies;
     }
 
     private ClickableObject CreateFragment(Vector3 position, Vector3 size, Material originalMaterial, int splitChance)

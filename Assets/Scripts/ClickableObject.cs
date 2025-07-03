@@ -19,12 +19,37 @@ public class ClickableObject : MonoBehaviour
 
     public Collider ObjectCollider => _cachedCollider;
 
-    public Vector3 Position { get; private set; }
-    public Vector3 Size { get; private set; }
-    public Material Material { get; private set; }
+    public Vector3 Position
+    {
+        get => _prefabDefaultPosition;
+        set
+        {
+            _prefabDefaultPosition = value;
+            transform.position = _prefabDefaultPosition;
+        }
+    }
+    public Vector3 Size
+    {
+        get => _prefabDefaultSize;
+        set
+        {
+            _prefabDefaultSize = value;
+            transform.localScale = _prefabDefaultSize;
+        }
+    }
+    public Material Material
+    {
+        get => _prefabDefaultMaterial;
+        set
+        {
+            _prefabDefaultMaterial = value;
+            if (_prefabDefaultMaterial != null)
+                _cachedRenderer.material = _prefabDefaultMaterial;
+        }
+    }
     public int SplitChance { get; private set; }
 
-    public static event System.Action<ClickableObject> OnObjectClicked;
+    public event System.Action<ClickableObject> OnObjectClicked;
 
     private void Awake()
     {
@@ -44,21 +69,8 @@ public class ClickableObject : MonoBehaviour
         Size = size;
         Material = material;
         SplitChance = splitChance;
-
-        ApplyRuntimeSettings();
     }
-
-    private void ApplyRuntimeSettings()
-    {
-        transform.position = Position;
-        transform.localScale = Size;
-
-        if (Material != null)
-        {
-            _cachedRenderer.material = Material;
-        }
-    }
-        
+            
     private void OnValidate()
     {
         if (!Application.isPlaying)
