@@ -41,6 +41,12 @@ public class ClickableObject : MonoBehaviour
         private set => _cachedCollider = value;
     }
 
+    public Rigidbody ObjectRigidbody
+    {
+        get => _cachedRigidbody;
+        private set => _cachedRigidbody = value;
+    }
+
     public int SplitChance { get; private set; }
 
     public event System.Action<ClickableObject> OnObjectClicked;
