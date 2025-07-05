@@ -17,36 +17,30 @@ public class ClickableObject : MonoBehaviour
     private Rigidbody _cachedRigidbody;
     private Collider _cachedCollider;
 
-    public Collider ObjectCollider => _cachedCollider;
-
     public Vector3 Position
     {
-        get => _prefabDefaultPosition;
-        set
-        {
-            _prefabDefaultPosition = value;
-            transform.position = _prefabDefaultPosition;
-        }
+        get => transform.position;
+        private set => transform.position = value;
     }
+
     public Vector3 Size
     {
-        get => _prefabDefaultSize;
-        set
-        {
-            _prefabDefaultSize = value;
-            transform.localScale = _prefabDefaultSize;
-        }
+        get => transform.localScale;
+        private set => transform.localScale = value;
     }
+
     public Material Material
     {
-        get => _prefabDefaultMaterial;
-        set
-        {
-            _prefabDefaultMaterial = value;
-            if (_prefabDefaultMaterial != null)
-                _cachedRenderer.material = _prefabDefaultMaterial;
-        }
+        get => _cachedRenderer.material;
+        private set => _cachedRenderer.material = value;
     }
+
+    public Collider ObjectCollider
+    {
+        get => _cachedCollider;
+        private set => _cachedCollider = value;
+    }
+
     public int SplitChance { get; private set; }
 
     public event System.Action<ClickableObject> OnObjectClicked;
@@ -57,9 +51,6 @@ public class ClickableObject : MonoBehaviour
         _cachedRigidbody = GetComponent<Rigidbody>();
         _cachedCollider = GetComponent<Collider>();
 
-        Position = transform.position;
-        Size = transform.localScale;
-        Material = _cachedRenderer.material;
         SplitChance = _prefabSplitChance;
     }
 
