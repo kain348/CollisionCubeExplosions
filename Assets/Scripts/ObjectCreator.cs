@@ -14,21 +14,21 @@ internal class ObjectCreator : MonoBehaviour
     [SerializeField] private ClickableObject _objectPrefab;
     [SerializeField] private List<Material> _materials = new List<Material>();
 
-    public List<Rigidbody> CreateFragments(ClickableObject original)
+    public List<ClickableObject> CreateFragments(ClickableObject original)
     {
         if (!_objectPrefab)
         {
             Debug.LogError("Prefab not assigned!", this);
 
-            return new List<Rigidbody>();
+            return new List<ClickableObject>();
         }
                
         return CreateNewFragments(original);        
     }
 
-    private List<Rigidbody> CreateNewFragments(ClickableObject original)
+    private List<ClickableObject> CreateNewFragments(ClickableObject original)
     {
-        List<Rigidbody> fragmentsRigidbodies = new List<Rigidbody>();
+        List<ClickableObject> fragments = new List<ClickableObject>();
 
         int count = Random.Range(_minCount, _maxCount + 1);
         Vector3 newSize = original.Size / _sizeReduction;
@@ -40,13 +40,13 @@ internal class ObjectCreator : MonoBehaviour
 
             var fragment = CreateFragment(spawnPosition, newSize, original.Material, newSplitChance);
 
-            if (fragment.TryGetComponent<Rigidbody>(out var rigidbody))
+            if (fragment.TryGetComponent<ClickableObject>(out var newObject))
             {
-                fragmentsRigidbodies.Add(rigidbody);
+                fragments.Add(newObject);
             }
         }
 
-        return fragmentsRigidbodies;
+        return fragments;
     }
 
     private ClickableObject CreateFragment(Vector3 position, Vector3 size, Material originalMaterial, int splitChance)

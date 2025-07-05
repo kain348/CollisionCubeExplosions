@@ -9,12 +9,12 @@ internal class Exploder : MonoBehaviour
     [SerializeField, Min(0f)] private float _upwardsModifier = 0f;
 
     [Header("Size Scaling")]
-    [SerializeField] private bool _scaleForceWithSize = false; 
-    [SerializeField, Min(0.1f)] private float _minSizeMultiplier = 0.5f; 
+    [SerializeField] private bool _scaleForceWithSize = false;
+    [SerializeField, Min(0.1f)] private float _minSizeMultiplier = 0.5f;
     [SerializeField, Min(1f)] private float _maxSizeMultiplier = 2f;
     [SerializeField] private float _noScalingMultiplier = 1f;
 
-    public void Explode(Vector3 explosionPosition, Vector3 objectSize, List<Rigidbody> fragments)
+    public void Explode(Vector3 explosionPosition, Vector3 objectSize, List<ClickableObject> fragments)
     {
         if (fragments == null || fragments.Count == 0)
             return;
@@ -23,17 +23,22 @@ internal class Exploder : MonoBehaviour
         float actualForce = _baseExplosionForce * sizeMultiplier;
         float actualRadius = _baseExplosionRadius * sizeMultiplier;
 
-        foreach (var rigidbody in fragments)
+        foreach (var fragment in fragments)
         {
-            if (rigidbody != null)
+            if (fragment != null)
             {
-                rigidbody.AddExplosionForce(
-                    actualForce,
-                    explosionPosition,
-                    actualRadius,
-                    _upwardsModifier,
-                    ForceMode.Impulse
-                    );
+                Rigidbody rigidbody = fragment.GetComponent<Rigidbody>();
+                if (rigidbody != null)
+                {
+
+                    rigidbody.AddExplosionForce(
+                        actualForce,
+                        explosionPosition,
+                        actualRadius,
+                        _upwardsModifier,
+                        ForceMode.Impulse
+                        );
+                }
             }
         }
     }

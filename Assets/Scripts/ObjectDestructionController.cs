@@ -12,13 +12,13 @@ internal class ObjectDestructionController : MonoBehaviour
     private void OnEnable()
     {
         if (_clickHandler != null)
-            _clickHandler.OnClickableObjectClicked += HandleObjectClick;
+            _clickHandler.ClickableObjectClicked += HandleObjectClick;
     }
 
     private void OnDisable()
     {
         if (_clickHandler != null)
-            _clickHandler.OnClickableObjectClicked -= HandleObjectClick;
+            _clickHandler.ClickableObjectClicked -= HandleObjectClick;
     }
 
     private void HandleObjectClick(ClickableObject clickedObject)
@@ -27,7 +27,7 @@ internal class ObjectDestructionController : MonoBehaviour
 
         if (_separator.ShouldSplit(clickedObject.SplitChance))
         {
-            List<Rigidbody> newObjectRigidbodies = _objectCreator.CreateFragments(clickedObject);
+            List<ClickableObject> newObjectRigidbodies = _objectCreator.CreateFragments(clickedObject);
 
             if (newObjectRigidbodies.Count > 0)
             {
