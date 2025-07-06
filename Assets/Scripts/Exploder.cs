@@ -14,31 +14,26 @@ internal class Exploder : MonoBehaviour
     [SerializeField, Min(1f)] private float _maxSizeMultiplier = 2f;
     [SerializeField] private float _noScalingMultiplier = 1f;
 
-    public void Explode(Vector3 explosionPosition, Vector3 objectSize, List<ClickableObject> fragments)
+    public void Explode(Vector3 explosionPosition, Vector3 objectSize, List<Rigidbody> fragmentsRigidbodies)
     {
-        if (fragments == null || fragments.Count == 0)
+        if (fragmentsRigidbodies == null || fragmentsRigidbodies.Count == 0)
             return;
 
         float sizeMultiplier = GetSizeMultiplier(objectSize);
         float actualForce = _baseExplosionForce * sizeMultiplier;
         float actualRadius = _baseExplosionRadius * sizeMultiplier;
 
-        foreach (var fragment in fragments)
+        foreach (var rigidbody in fragmentsRigidbodies)
         {
-            if (fragment != null)
+            if (rigidbody != null)
             {
-                Rigidbody rigidbody = fragment.GetComponent<Rigidbody>();
-                if (rigidbody != null)
-                {
-
-                    rigidbody.AddExplosionForce(
-                        actualForce,
-                        explosionPosition,
-                        actualRadius,
-                        _upwardsModifier,
-                        ForceMode.Impulse
-                        );
-                }
+                rigidbody.AddExplosionForce(
+                    actualForce,
+                    explosionPosition,
+                    actualRadius,
+                    _upwardsModifier,
+                    ForceMode.Impulse
+                    );
             }
         }
     }
